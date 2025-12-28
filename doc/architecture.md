@@ -1,4 +1,24 @@
-### Database Design
+# System Architecture
+
+## 1. Overview
+The application follows a three-tier architecture:
+- Frontend (React)
+- Backend (FastAPI)
+- Database (PostgreSQL)
+
+## 2. Component Diagram
+Frontend communicates with the backend via REST APIs.
+Backend interacts with PostgreSQL for data persistence.
+
+## 3. Data Flow
+User → Frontend → API → Database → API → Frontend
+
+## 4. Deployment Architecture
+- Dockerized services
+- CI/CD via GitHub Actions
+- Cloud deployment using Render
+
+# Database Design
 
 ### users
 - id (UUID, primary key)
