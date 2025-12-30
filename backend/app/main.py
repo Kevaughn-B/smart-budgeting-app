@@ -1,9 +1,13 @@
+import os
 from fastapi import FastAPI
+from dotenv import load_dotenv
 from app.api.health import router as health_router
 
+load_dotenv()
+
 app = FastAPI(
-    title="Smart Budget API",
-    version="1.0.0"
+    title=os.getenv("APP_NAME"),
+    version=os.getenv("APP_VERSION")
 )
 
 app.include_router(health_router)
