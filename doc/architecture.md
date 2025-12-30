@@ -2,7 +2,7 @@
 
 ### users
 - id (UUID, primary key)
-- username (string)
+- username (string, unique)
 - email (string, unique)
 - password_hash (string)
 - created_at (timestamp)
