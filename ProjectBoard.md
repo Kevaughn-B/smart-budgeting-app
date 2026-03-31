@@ -1,5 +1,5 @@
 ### In-Progress
-Fix Merging
+
 
 ### To-Do
 Repo setup
@@ -10,4 +10,11 @@ User model
 Auth endpoints
 Docker setup
 
+1.	Authentication system
+2.	Budget model
+3.	Expense model
+4.	Protected endpoints
+5.	First real logic
+
 ### Done
+Fix Merging
