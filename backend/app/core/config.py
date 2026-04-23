@@ -7,7 +7,7 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(
         env_file=".env",
-        extra="allow"  # ✅ THIS FIXES YOUR ERROR
+        extra="allow"
     )
 
 settings = Settings()
