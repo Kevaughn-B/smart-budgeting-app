@@ -1,24 +1,15 @@
-from app.core.config import settings
-import os
-from app.api.users import router as users_router
 from fastapi import FastAPI
-from dotenv import load_dotenv
-from app.api.health import router as health_router
-#Temporary imports to create DB tables
-from app.db.session import engine
+from app.api.routes import auth
 from app.db.base import Base
+from app.db.session import engine
 
-#Test code to create tables
+app = FastAPI(title="Smart Budget API")
 
-load_dotenv()
+# Create tables (SQLite file will be generated automatically)
+Base.metadata.create_all(bind=engine)
 
-app = FastAPI(
-    title=settings.APP_NAME, 
-    version=settings.APP_VERSION)
-
-app.include_router(health_router)
-app.include_router(users_router)
+app.include_router(auth.router)
 
 @app.get("/")
 def root():
-    return {"status": "Smart Budget API running successfully."}
+    return {"message": "API running with SQLite"}
