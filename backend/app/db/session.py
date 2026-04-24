@@ -1,20 +1,16 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
-from sqlalchemy.orm import Session
+
+DATABASE_URL = settings.DATABASE_URL
 
 engine = create_engine(
-    settings.DATABASE_URL, 
-    pool_pre_ping=True)
+    DATABASE_URL,
+    connect_args={"check_same_thread": False}  # SQLite only
+)
 
 SessionLocal = sessionmaker(
-    autocommit=False, 
-    autoflush=False, 
-    bind=engine)
-
-def get_db():
-    db: Session = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
