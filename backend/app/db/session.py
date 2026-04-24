@@ -1,12 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from app.core.config import settings  # ✅ ADD THIS
 
-# SQLite database file
-DATABASE_URL = "sqlite:///./budget.db"
+DATABASE_URL = settings.DATABASE_URL  # ✅ USE ENV
 
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False}  # required for SQLite
+    connect_args={"check_same_thread": False}  # SQLite only
 )
 
 SessionLocal = sessionmaker(

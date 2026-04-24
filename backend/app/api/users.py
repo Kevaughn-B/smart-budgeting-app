@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Column, String
 
 from app.schemas.user import UserCreate, UserRead
 from app.db.session import get_db
@@ -25,7 +25,7 @@ def create_user(user_in: UserCreate, db: Session = Depends(get_db)):
     # Create User instance
     new_user = User(
         email=user_in.email,
-        full_name=user_in.full_name,
+        full_name = Column(String, nullable=True),
         hashed_password=hashed_password
     )
     
