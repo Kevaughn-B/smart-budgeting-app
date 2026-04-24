@@ -13,4 +13,4 @@ app.include_router(transactions.router)
 
 @app.get("/")
 def root():
-    return {"message": "API running with SQLite"}
+    return {"message": "Smart Budgeting API is running"}
