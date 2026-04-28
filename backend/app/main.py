@@ -11,6 +11,10 @@ app.include_router(auth.router)
 app.include_router(categories.router)
 app.include_router(transactions.router)
 
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
+
 @app.get("/")
 def root():
     return {"message": "Smart Budgeting API is running"}
