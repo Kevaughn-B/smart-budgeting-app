@@ -16,7 +16,6 @@ def create_transaction(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
-    # ✅ Validate category belongs to user
     category = db.query(Category).filter(
         Category.id == data.category_id,
         Category.user_id == user.id
@@ -25,7 +24,6 @@ def create_transaction(
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
 
-    # ✅ Validate type
     if data.type not in ["income", "expense"]:
         raise HTTPException(status_code=400, detail="Invalid type")
 

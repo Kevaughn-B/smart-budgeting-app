@@ -28,8 +28,6 @@ def create_token(user_id: int):
     }
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-
-# ✅ REGISTER
 @router.post("/register")
 def register(data: UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.email == data.email).first()
