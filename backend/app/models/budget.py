@@ -1,4 +1,8 @@
 from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from app.db.base import Base
+from datetime import datetime
+from sqlalchemy import DateTime 
 
 class Budget(Base):
     __tablename__ = "budgets"

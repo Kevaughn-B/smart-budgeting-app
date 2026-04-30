@@ -9,10 +9,10 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    is_default = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    user_id = Column(ForeignKey("users.id"), nullable=True)  
+    user_id = Column(ForeignKey("users.id"))  
+    is_default = Column(Boolean, default=False)
 
     user = relationship("User", back_populates="categories")
     transactions = relationship("Transaction", back_populates="category")

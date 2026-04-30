@@ -6,12 +6,14 @@ from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordRequestForm
 from app.api.deps import get_db
 from app.models.user import User
+from app.models.category import Category
 from app.schemas.user import UserCreate
 from app.core.config import settings
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+
 
 def hash_password(password: str):
     return pwd_context.hash(password)
@@ -27,6 +29,7 @@ def create_token(user_id: int):
         "exp": datetime.utcnow() + timedelta(hours=24)
     }
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
 
 @router.post("/register")
 def register(data: UserCreate, db: Session = Depends(get_db)):
@@ -44,7 +47,25 @@ def register(data: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
 
+    default_categories = [
+        "Salary",
+        "Rent",
+        "Groceries",
+        "Utilities",
+        "Entertainment"
+    ]
+
+    for name in default_categories:
+        db.add(Category(
+            name=name,
+            user_id=user.id,
+            is_default=True
+        ))
+
+    db.commit()
+
     return {"message": "User created"}
+
 
 @router.post("/login")
 def login(
