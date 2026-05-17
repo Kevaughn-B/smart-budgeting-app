@@ -30,7 +30,6 @@ def create_token(user_id: int):
     }
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-
 @router.post("/register")
 def register(data: UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.email == data.email).first()
@@ -44,8 +43,7 @@ def register(data: UserCreate, db: Session = Depends(get_db)):
     )
 
     db.add(user)
-    db.commit()
-    db.refresh(user)
+    db.flush()
 
     default_categories = [
         "Salary",
@@ -63,9 +61,9 @@ def register(data: UserCreate, db: Session = Depends(get_db)):
         ))
 
     db.commit()
+    db.refresh(user)
 
     return {"message": "User created"}
-
 
 @router.post("/login")
 def login(
