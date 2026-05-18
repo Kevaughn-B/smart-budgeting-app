@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from app.api.routes import auth, categories, transactions
 from app.db.base import Base
 from app.db.session import engine
-
+from app.models import *
+from app.api.routes import budgets, dashboard
 app = FastAPI(title="Smart Budget API")
 
 Base.metadata.create_all(bind=engine)
@@ -10,10 +11,8 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth.router)
 app.include_router(categories.router)
 app.include_router(transactions.router)
-
-@app.on_event("startup")
-def on_startup():
-    Base.metadata.create_all(bind=engine)
+app.include_router(budgets.router)
+app.include_router(dashboard.router)
 
 @app.get("/")
 def root():
