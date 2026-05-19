@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import api from "@/lib/api"
+import axios from "axios"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -28,9 +29,18 @@ export default function LoginPage() {
       localStorage.setItem("token", res.data.access_token)
 
       router.push("/dashboard")
-    } catch {
-      alert("Invalid credentials")
-    }
+    } catch (error: unknown) {
+  if (axios.isAxiosError(error)) {
+    console.error(error.response?.data || error.message)
+
+    alert(
+      error.response?.data?.detail || "Login failed"
+    )
+  } else {
+    console.error(error)
+    alert("An unexpected error occurred")
+  }
+}
   }
 
   return (
