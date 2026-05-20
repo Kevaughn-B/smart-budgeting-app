@@ -19,22 +19,6 @@ router = APIRouter(
     tags=["Transactions"]
 )
 
-@router.get("/{id}")
-def get_transaction(id: int, db: Session = Depends(get_db)):
-    transaction = (
-        db.query(Transaction)
-        .filter(Transaction.id == id)
-        .first()
-    )
-
-    if not transaction:
-        raise HTTPException(
-            status_code=404,
-            detail="Transaction not found"
-        )
-
-    return transaction
-
 @router.post("/", response_model=TransactionRead)
 def create_transaction(
     data: TransactionCreate,
@@ -163,6 +147,22 @@ def get_budget_analysis(
         "budget_limit": budget.needs_percent,
         "status": status
     }
+
+@router.get("/{id}")
+def get_transaction(id: int, db: Session = Depends(get_db)):
+    transaction = (
+        db.query(Transaction)
+        .filter(Transaction.id == id)
+        .first()
+    )
+
+    if not transaction:
+        raise HTTPException(
+            status_code=404,
+            detail="Transaction not found"
+        )
+
+    return transaction
 
 @router.put("/{id}")
 def update_transaction(

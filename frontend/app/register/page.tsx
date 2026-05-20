@@ -26,7 +26,7 @@ export default function RegisterPage() {
     console.error(error.response?.data || error.message)
 
     alert(
-      error.response?.data?.detail || "Login failed"
+      error.response?.data?.detail || "Registration failed"
     )
   } else {
     console.error(error)
