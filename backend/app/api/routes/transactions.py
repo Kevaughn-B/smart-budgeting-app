@@ -19,7 +19,6 @@ router = APIRouter(
     tags=["Transactions"]
 )
 
-
 @router.post("/", response_model=TransactionRead)
 def create_transaction(
     data: TransactionCreate,
@@ -147,4 +146,71 @@ def get_budget_analysis(
         "expense_percent": round(expense_percent, 2),
         "budget_limit": budget.needs_percent,
         "status": status
+    }
+
+@router.get("/{id}")
+def get_transaction(id: int, db: Session = Depends(get_db)):
+    transaction = (
+        db.query(Transaction)
+        .filter(Transaction.id == id)
+        .first()
+    )
+
+    if not transaction:
+        raise HTTPException(
+            status_code=404,
+            detail="Transaction not found"
+        )
+
+    return transaction
+
+@router.put("/{id}")
+def update_transaction(
+    id: int,
+    updated_data: TransactionCreate,
+    db: Session = Depends(get_db)
+):
+    transaction = (
+        db.query(Transaction)
+        .filter(Transaction.id == id)
+        .first()
+    )
+
+    if not transaction:
+        raise HTTPException(
+            status_code=404,
+            detail="Transaction not found"
+        )
+
+    transaction.description = updated_data.description
+    transaction.amount = updated_data.amount
+    transaction.type = updated_data.type
+
+    db.commit()
+    db.refresh(transaction)
+
+    return transaction
+
+@router.delete("/{id}")
+def delete_transaction(
+    id: int,
+    db: Session = Depends(get_db)
+):
+    transaction = (
+        db.query(Transaction)
+        .filter(Transaction.id == id)
+        .first()
+    )
+
+    if not transaction:
+        raise HTTPException(
+            status_code=404,
+            detail="Transaction not found"
+        )
+
+    db.delete(transaction)
+    db.commit()
+
+    return {
+        "message": "Transaction deleted successfully"
     }
