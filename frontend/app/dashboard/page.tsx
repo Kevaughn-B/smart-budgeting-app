@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import api from "@/lib/api"
+import AuthGuard from "@/components/AuthGuard"
 
 interface SummaryData {
   income: number
@@ -35,6 +36,7 @@ export default function DashboardPage() {
   }
 
   return (
+    <AuthGuard>
     <main className="min-h-screen bg-black text-white p-10">
       <h1 className="text-4xl font-bold mb-8">
         Dashboard
@@ -72,5 +74,6 @@ export default function DashboardPage() {
         </div>
       </div>
     </main>
+    </AuthGuard>
   )
 }
