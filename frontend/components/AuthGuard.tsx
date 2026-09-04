@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 export default function AuthGuard({
@@ -9,14 +9,19 @@ export default function AuthGuard({
   children: React.ReactNode
 }) {
   const router = useRouter()
+  const [authorized] = useState(
+    () => typeof window !== "undefined" && Boolean(localStorage.getItem("token")),
+  )
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-
-    if (!token) {
+    if (!authorized) {
       router.push("/login")
     }
-  }, [router])
+  }, [authorized, router])
+
+  if (!authorized) {
+    return <div className="min-h-screen bg-black text-white p-10">Loading...</div>
+  }
 
   return <>{children}</>
 }

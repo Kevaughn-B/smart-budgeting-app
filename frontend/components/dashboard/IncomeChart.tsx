@@ -8,20 +8,14 @@ import {
   Tooltip,
 } from "recharts"
 
-const data = [
-  { month: "Jan", income: 1000 },
-  { month: "Feb", income: 2000 },
-  { month: "Mar", income: 1500 },
-]
-
-export default function IncomeChart() {
+export default function IncomeChart({ data }: { data: { month: string; income: number }[] }) {
   return (
     <div className="bg-zinc-900 p-6 rounded-2xl">
       <h2 className="mb-4 text-xl font-bold">
         Income Trend
       </h2>
 
-      <LineChart
+      {data.length === 0 ? <p className="text-zinc-400">Add income to see a trend.</p> : <LineChart
         width={500}
         height={300}
         data={data}
@@ -33,7 +27,7 @@ export default function IncomeChart() {
           type="monotone"
           dataKey="income"
         />
-      </LineChart>
+      </LineChart>}
     </div>
   )
 }

@@ -1,0 +1,16 @@
+name: Send bill reminders
+
+on:
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request daily reminders
+        run: curl --fail --silent --show-error --retry 2 -X POST "$REMINDER_ENDPOINT/bills/process-reminders" -H "X-Reminder-Token: $REMINDER_JOB_TOKEN"
+        env:
+          REMINDER_ENDPOINT: ${{ secrets.REMINDER_ENDPOINT }}
+          REMINDER_JOB_TOKEN: ${{ secrets.REMINDER_JOB_TOKEN }}

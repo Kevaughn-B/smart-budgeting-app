@@ -1,11 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 class BudgetUpdate(BaseModel):
-    monthly_limit: float
+    monthly_limit: float = Field(ge=0, le=10_000_000)
 
 class BudgetResponse(BaseModel):
     id: int
     monthly_limit: float
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

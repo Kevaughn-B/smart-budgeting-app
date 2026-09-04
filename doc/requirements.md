@@ -1,121 +1,54 @@
-# Smart Budgeting & Bill Reminder App
-## Requirements Specifications
-### 1. Project Overview
----
+# Requirements
 
-### 2. Objectives
----
+## Product overview
 
-### 3. Functional Requirements
-#### FR-01: 
----
+SmartBudget is a web application that helps an individual track income and expenses, maintain a monthly spending limit, review spending analytics, and schedule bill-reminder emails.
 
-### 4. Non-Functional Requirements
-#### NFR-01: 
----
+## Functional requirements
 
-### 5. Constraints
----
+### Authentication
 
-### 6. Out of Scope
----
+- Users can register with a unique email address and password of at least eight characters.
+- Users can log in with email and password and receive a 24-hour bearer token.
+- Protected data is available only to the authenticated owner.
 
-### 7. Assumptions
----
+### Transactions and categories
 
-### 8. Acceptance Criteria
----
+- A user can create income and expense transactions with an amount, category, description, and date.
+- A user can view, update, and delete only their own transactions.
+- New accounts receive default categories: Salary, Rent, Groceries, Utilities, and Entertainment.
+- Users can create additional categories through the API.
 
-# Smart Budgeting & Bill Reminder Web App
-## Requirements Specification
+### Budget and analytics
 
-### 1. Project Overview
-The Smart Budgeting & Bill Reminder Web App is a full-stack web application designed to help users manage personal finances by tracking expenses, setting budgets, and receiving bill reminders.
+- A user can set one monthly spending limit.
+- The dashboard shows total income, expenses, and balance.
+- Analytics shows an expense breakdown by category and income grouped by month.
 
-The system will provide a secure, responsive, and scalable platform accessible via modern web browsers on desktop and mobile devices.
+### Bill reminders
 
----
+- A user can create and delete bill reminders with a due date and reminder lead time.
+- A recurring bill rolls forward one calendar month after a reminder is sent. A non-recurring bill is deactivated after its reminder is sent.
+- The protected reminder job sends eligible emails through Resend and prevents duplicate sends for the same due date.
 
-### 2. Objectives
-- Enable users to track and categorize expenses
-- Provide budget insights and spending analytics
-- Send timely bill reminders via email
-- Ensure secure handling of user financial data
-- Deliver a production-ready, cloud-deployed application
+## Non-functional requirements
 
----
+- FastAPI validates request payloads and JWT-protects private routes.
+- Secrets are supplied through environment variables and are never committed.
+- The frontend is responsive for common desktop and mobile widths.
+- The database schema is versioned with Alembic migrations.
+- CI runs backend tests plus frontend lint and production build checks.
 
-### 3. Functional Requirements
+## Constraints and assumptions
 
-#### FR-01: User Authentication
-- Users shall be able to register using email and password
-- Users shall be able to log in and log out securely
-- Passwords shall be hashed and never stored in plain text
+- The application supports USD display formatting only.
+- The initial version has no bank integrations, investment tracking, password reset flow, or native mobile app.
+- Email delivery requires a Resend account, API key, and verified sending domain for recipients other than the account owner.
+- A free Render service may sleep; it is suitable for a portfolio/demo deployment, not a guaranteed always-on service.
 
-#### FR-02: Expense Management
-- Users shall be able to add, edit, delete expenses
-- Expenses shall include amount, category, date, and description
+## Acceptance criteria
 
-#### FR-03: Budget Management
-- Users shall be able to set monthly budgets by category
-- The system shall track remaining budget balances
-
-#### FR-04: Bill Reminders
-- Users shall be able to create recurring bills
-- The system shall send email reminders before due dates
-
-#### FR-05: Analytics Dashboard
-- Users shall view monthly summaries
-- The dashboard shall display charts for spending trends
-
----
-
-### 4. Non-Functional Requirements
-
-#### NFR-01: Security
-- JWT-based authentication
-- Password hashing (bcrypt)
-- Secure storage of secrets via environment variables
-- Protection against SQL injection and XSS
-
-#### NFR-02: Performance
-- API response times under 300ms for common operations
-
-#### NFR-03: Scalability
-- Containerized architecture using Docker
-- Stateless backend services
-
-#### NFR-04: Usability
-- Mobile-first responsive design
-- Intuitive navigation and UI
-
-#### NFR-05: Reliability
-- Target uptime of 99%
-- Graceful error handling
-
----
-
-### 5. Constraints
-- Web-based application only
-- No native mobile application in scope
-- Single-currency support (USD)
-
----
-
-### 6. Out of Scope
-- Investment tracking
-- Bank account integration
-- Cryptocurrency support
-
----
-
-### 7. Assumptions
-- Users have access to modern browsers
-- Email service provider is available for reminders
-
----
-
-### 8. Acceptance Criteria
-- All core features implemented and tested
-- Application deployed to cloud environment
-- Documentation completed and reviewed
+- A new user can complete registration, login, transaction CRUD, budget update, analytics review, and bill creation locally.
+- One user cannot retrieve, edit, or delete another user's transaction.
+- `alembic upgrade head`, backend tests, frontend lint, and frontend production build succeed.
+- Deployment configuration and required variables are documented before publishing.

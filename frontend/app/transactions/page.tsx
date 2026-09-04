@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import api from "@/lib/api"
 import AuthGuard from "@/components/AuthGuard"
 
@@ -55,9 +56,9 @@ export default function TransactionsPage() {
                   className="bg-zinc-900 rounded-2xl p-6 flex justify-between items-center"
                 >
                   <div>
-                    <p className="font-semibold">
+                    <Link href={`/transactions/${transaction.id}`} className="font-semibold hover:underline">
                       {transaction.description}
-                    </p>
+                    </Link>
 
                     <p className="text-zinc-400 text-sm capitalize">
                       {transaction.type}

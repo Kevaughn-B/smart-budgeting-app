@@ -1,53 +1,42 @@
-## Database Design
-# System Architecture
+# Architecture
 
-## 1. Overview
-The application follows a three-tier architecture:
-- Frontend (React)
-- Backend (FastAPI)
-- Database (PostgreSQL)
+## Overview
 
-## 2. Component Diagram
-Frontend communicates with the backend via REST APIs.
-Backend interacts with PostgreSQL for data persistence.
+SmartBudget uses a three-tier architecture:
 
-## 3. Data Flow
-User → Frontend → API → Database → API → Frontend
+```text
+Next.js browser client → FastAPI REST API → PostgreSQL database
+                              ↓
+                         Resend email API
+```
 
-## 4. Deployment Architecture
-- Dockerized services
-- CI/CD via GitHub Actions
-- Cloud deployment using Render
+The client stores the short-lived access token in browser local storage and includes it as a bearer token with API requests. FastAPI validates the token and scopes database queries to the authenticated user.
 
-# Database Design
+## Components
 
-### users
-- id (UUID, primary key)
-- username (string, unique)
-- email (string, unique)
-- password_hash (string)
-- created_at (timestamp)
-- updated_at (timestamp)
+- **Frontend:** Next.js App Router pages for authentication, dashboard, transactions, analytics, budget, and bills.
+- **Backend:** FastAPI routes, Pydantic schemas, SQLAlchemy models, and dependency-based authentication/database sessions.
+- **Database:** PostgreSQL in deployment; SQLite may be used for local smoke tests. Alembic owns schema changes.
+- **Reminder job:** A scheduled GitHub Actions workflow calls the protected reminder route once daily. The API sends eligible messages to Resend.
 
-### categories
-- id (UUID, primary key)
-- name (string)
-- user_id (UUID, foreign key - users.id)
-- created_at (timestamp)
+## Data model
 
-### expenses
-- id (UUID, primary key)
-- user_id (UUID, foreign key - users.id)
-- category_id (UUID, foreign key - categories.id)
-- amount (decimal)
-- description (string)
-- expense_date (date)
-- created_at (timestamp)
+| Table | Purpose | Main relationships |
+| --- | --- | --- |
+| `users` | Login identity and password hash | Owns categories, transactions, budget, and bills |
+| `categories` | User-specific transaction labels | Belongs to one user; has many transactions |
+| `transactions` | Income and expense records | Belongs to one user and category |
+| `budgets` | One monthly spending limit and allocation percentages | One-to-one with user |
+| `bills` | Scheduled bill reminders | Belongs to one user |
 
-### budgets
-- id (UUID, primary key)
-- user_id (UUID, foreign key - users.id)
-- category_id (UUID, foreign key - categories.id)
-- monthly_limit (decimal)
-- month (date, e.g. 2025-01-01)
-- created_at (timestamp)
+## Lifecycle
+
+1. The user registers; the API hashes the password and creates default categories and a default budget.
+2. The user logs in and receives a JWT.
+3. Authenticated requests create or query user-owned records.
+4. Analytics are calculated from the user's transactions in the client.
+5. The daily job authenticates with `REMINDER_JOB_TOKEN`; eligible bills are emailed and then advanced/deactivated.
+
+## Deployment boundary
+
+Render runs the Python API from `backend/`, applies migrations before startup, and exposes `/health`. The Next.js application is deployed separately and receives the public API URL as `NEXT_PUBLIC_API_URL`. CORS allows only configured frontend origins.

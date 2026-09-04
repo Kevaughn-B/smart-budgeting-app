@@ -15,3 +15,4 @@ class User(Base):
     budget = relationship("Budget", back_populates="user", uselist=False)
     transactions = relationship("Transaction", back_populates="user")
     categories = relationship("Category", back_populates="user")
+    bills = relationship("Bill", back_populates="user", cascade="all, delete-orphan")

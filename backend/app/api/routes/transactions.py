@@ -37,18 +37,13 @@ def create_transaction(
             detail="Category not found"
         )
 
-    if data.type not in ["income", "expense"]:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid transaction type"
-        )
-
     transaction = Transaction(
         amount=data.amount,
         type=data.type,
         category_id=data.category_id,
         user_id=user.id,
-        description=data.description
+        description=data.description,
+        transaction_date=data.transaction_date,
     )
 
     db.add(transaction)
@@ -66,7 +61,7 @@ def get_transactions(
 
     transactions = db.query(Transaction).filter(
         Transaction.user_id == user.id
-    ).all()
+    ).order_by(Transaction.transaction_date.desc(), Transaction.id.desc()).all()
 
     return transactions
 
@@ -148,11 +143,10 @@ def get_budget_analysis(
         "status": status
     }
 
-@router.get("/{id}")
-def get_transaction(id: int, db: Session = Depends(get_db)):
+def get_owned_transaction(transaction_id: int, db: Session, user: User) -> Transaction:
     transaction = (
         db.query(Transaction)
-        .filter(Transaction.id == id)
+        .filter(Transaction.id == transaction_id, Transaction.user_id == user.id)
         .first()
     )
 
@@ -164,49 +158,56 @@ def get_transaction(id: int, db: Session = Depends(get_db)):
 
     return transaction
 
-@router.put("/{id}")
-def update_transaction(
-    id: int,
-    updated_data: TransactionCreate,
-    db: Session = Depends(get_db)
+
+@router.get("/{transaction_id}", response_model=TransactionRead)
+def get_transaction(
+    transaction_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
 ):
-    transaction = (
-        db.query(Transaction)
-        .filter(Transaction.id == id)
+    return get_owned_transaction(transaction_id, db, user)
+
+@router.put("/{transaction_id}", response_model=TransactionRead)
+def update_transaction(
+    transaction_id: int,
+    updated_data: TransactionCreate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    transaction = get_owned_transaction(transaction_id, db, user)
+    category = (
+        db.query(Category)
+        .filter(
+            Category.id == updated_data.category_id,
+            Category.user_id == user.id,
+        )
         .first()
     )
 
-    if not transaction:
+    if not category:
         raise HTTPException(
             status_code=404,
-            detail="Transaction not found"
+            detail="Category not found"
         )
 
     transaction.description = updated_data.description
     transaction.amount = updated_data.amount
     transaction.type = updated_data.type
+    transaction.category_id = updated_data.category_id
+    transaction.transaction_date = updated_data.transaction_date
 
     db.commit()
     db.refresh(transaction)
 
     return transaction
 
-@router.delete("/{id}")
+@router.delete("/{transaction_id}")
 def delete_transaction(
-    id: int,
-    db: Session = Depends(get_db)
+    transaction_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
 ):
-    transaction = (
-        db.query(Transaction)
-        .filter(Transaction.id == id)
-        .first()
-    )
-
-    if not transaction:
-        raise HTTPException(
-            status_code=404,
-            detail="Transaction not found"
-        )
+    transaction = get_owned_transaction(transaction_id, db, user)
 
     db.delete(transaction)
     db.commit()

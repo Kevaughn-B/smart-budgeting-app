@@ -6,20 +6,14 @@ import {
   Tooltip,
 } from "recharts"
 
-const data = [
-  { name: "Food", value: 400 },
-  { name: "Bills", value: 300 },
-  { name: "Transport", value: 200 },
-]
-
-export default function ExpenseChart() {
+export default function ExpenseChart({ data }: { data: { name: string; value: number }[] }) {
   return (
     <div className="bg-zinc-900 p-6 rounded-2xl">
       <h2 className="mb-4 text-xl font-bold">
         Expense Breakdown
       </h2>
 
-      <PieChart width={300} height={300}>
+      {data.length === 0 ? <p className="text-zinc-400">Add expenses to see a breakdown.</p> : <PieChart width={300} height={300}>
         <Pie
           data={data}
           dataKey="value"
@@ -27,7 +21,7 @@ export default function ExpenseChart() {
         />
 
         <Tooltip />
-      </PieChart>
+      </PieChart>}
     </div>
   )
 }

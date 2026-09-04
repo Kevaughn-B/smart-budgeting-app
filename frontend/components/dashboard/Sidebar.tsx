@@ -23,6 +23,14 @@ export default function Sidebar() {
         <Link href="/analytics">
           <p>Analytics</p>
         </Link>
+
+        <Link href="/budget">
+          <p>Budget</p>
+        </Link>
+
+        <Link href="/bills">
+          <p>Bill reminders</p>
+        </Link>
       </nav>
     </aside>
   )

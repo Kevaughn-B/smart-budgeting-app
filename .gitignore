@@ -59,6 +59,7 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+test_smart_budget.db
 
 # Flask stuff:
 instance/
@@ -204,6 +205,7 @@ cython_debug/
 node_modules/
 dist/
 build/
+.DS_Store
 
 # Docker
 *.log

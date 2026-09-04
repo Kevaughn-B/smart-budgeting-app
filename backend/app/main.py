@@ -1,32 +1,27 @@
 from fastapi import FastAPI
-from app.api.routes import auth, categories, transactions
-from app.db.base import Base
-from app.db.session import engine
+from app.api.routes import auth, bills, budgets, categories, dashboard, transactions
+from app.api import health
 from app.models import *
-from app.api.routes import budgets, dashboard
+from app.core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Smart Budget API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://your-app.vercel.app"],
+    allow_origins=[origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-Base.metadata.drop_all(bind=engine)
-Base.metadata.create_all(bind=engine)
-
+app.include_router(health.router)
 app.include_router(auth.router)
 app.include_router(categories.router)
 app.include_router(transactions.router)
 app.include_router(budgets.router)
 app.include_router(dashboard.router)
+app.include_router(bills.router)
 
 @app.get("/")
 def root():
