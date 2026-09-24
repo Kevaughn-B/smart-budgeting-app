@@ -17,3 +17,18 @@ api.interceptors.request.use((config) => {
 })
 
 export default api
+
+export function getApiErrorMessage(error: unknown, fallback: string) {
+  if (!axios.isAxiosError(error)) return fallback
+
+  const detail = error.response?.data?.detail
+  if (typeof detail === "string") return detail
+
+  if (Array.isArray(detail)) {
+    return detail
+      .map((item) => item.msg || "Invalid input")
+      .join(" ")
+  }
+
+  return fallback
+}

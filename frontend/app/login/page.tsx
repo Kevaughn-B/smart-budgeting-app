@@ -2,8 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import api from "@/lib/api"
-import axios from "axios"
+import api, { getApiErrorMessage } from "@/lib/api"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -30,17 +29,9 @@ export default function LoginPage() {
 
       router.push("/dashboard")
     } catch (error: unknown) {
-  if (axios.isAxiosError(error)) {
-    console.error(error.response?.data || error.message)
-
-    alert(
-      error.response?.data?.detail || "Login failed"
-    )
-  } else {
-    console.error(error)
-    alert("An unexpected error occurred")
-  }
-}
+      console.error(error)
+      alert(getApiErrorMessage(error, "Login failed"))
+    }
   }
 
   return (
@@ -52,16 +43,23 @@ export default function LoginPage() {
         <h1 className="text-3xl font-bold">Login</h1>
 
         <input
+          type="email"
           className="w-full p-3 rounded bg-zinc-800"
           placeholder="Email"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
         />
 
         <input
           type="password"
           className="w-full p-3 rounded bg-zinc-800"
           placeholder="Password"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete="current-password"
         />
 
         <button className="w-full bg-white text-black p-3 rounded font-semibold">

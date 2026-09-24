@@ -2,8 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import api from "@/lib/api"
-import axios from "axios"
+import api, { getApiErrorMessage } from "@/lib/api"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -22,17 +21,9 @@ export default function RegisterPage() {
 
       router.push("/login")
     } catch (error: unknown) {
-  if (axios.isAxiosError(error)) {
-    console.error(error.response?.data || error.message)
-
-    alert(
-      error.response?.data?.detail || "Registration failed"
-    )
-  } else {
-    console.error(error)
-    alert("An unexpected error occurred")
-  }
-}
+      console.error(error)
+      alert(getApiErrorMessage(error, "Registration failed"))
+    }
   }
 
   return (
@@ -44,16 +35,24 @@ export default function RegisterPage() {
         <h1 className="text-3xl font-bold">Register</h1>
 
         <input
+          type="email"
           className="w-full p-3 rounded bg-zinc-800"
           placeholder="Email"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
         />
 
         <input
           type="password"
           className="w-full p-3 rounded bg-zinc-800"
-          placeholder="Password"
+          placeholder="Password (at least 8 characters)"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
+          minLength={8}
+          required
+          autoComplete="new-password"
         />
 
         <button className="w-full bg-white text-black p-3 rounded font-semibold">
